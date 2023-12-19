@@ -17,6 +17,84 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EntidadControllerTest {
 
 
+    @Autowired
+    private TestRestTemplate restTemplate;
 
+    @Test
+    public void testFindAll() {
+        ResponseEntity<EntidadResponseDTO[]> response = restTemplate.exchange(
+                "http://localhost:8080/v1/entidad",
+                HttpMethod.GET,
+                null,
+                EntidadResponseDTO[].class
+        );
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void testFindById() {
+        int entityId = 1;
+
+        ResponseEntity<EntidadResponseDTO> response = restTemplate.exchange(
+                "http://localhost:8080/v1/entidad/" + entityId,
+                HttpMethod.GET,
+                null,
+                EntidadResponseDTO.class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void testUpdate() {
+        int entityId = 1;
+        EntidadRequestDTO requestDto = new EntidadRequestDTO();
+        requestDto.setNombre("PNP");
+        requestDto.setContacto("975947746");
+        requestDto.setRuc("1234567890");
+        requestDto.setDireccion("Urb. Los Rosales");
+        requestDto.setEstado("A");
+
+        ResponseEntity<EntidadResponseDTO> response = restTemplate.exchange(
+                "http://localhost:8080/v1/entidad/" + entityId,
+                HttpMethod.PUT,
+                new HttpEntity<>(requestDto, new HttpHeaders()),
+                EntidadResponseDTO.class
+        );
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void testCreate() {
+        EntidadRequestDTO requestDto = new EntidadRequestDTO();
+        requestDto.setNombre("PNP");
+        requestDto.setContacto("975947746");
+        requestDto.setRuc("1234567890");
+        requestDto.setDireccion("Urb. Miraflores");
+        requestDto.setEstado("A");
+
+        ResponseEntity<EntidadResponseDTO> response = restTemplate.exchange(
+                "http://localhost:8080/v1/entidad",
+                HttpMethod.POST,
+                new HttpEntity<>(requestDto, new HttpHeaders()),
+                EntidadResponseDTO.class
+        );
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
+
+    @Test
+    public void testDelete() {
+        int entityId = 1;
+
+        ResponseEntity<Void> response = restTemplate.exchange(
+                "http://localhost:8080/v1/entidad/" + entityId,
+                HttpMethod.DELETE,
+                null,
+                Void.class
+        );
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
 
 }
